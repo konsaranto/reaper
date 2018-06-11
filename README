@@ -67,6 +67,8 @@ Flags:		-h display the help section
 
 		The program raises a SyntaxWarning when it starts which can safely be ignored.		
 
+		Check https://github.com for new versions of Reaper.
+		
 ---Contact Information---
 
 Konstantinos Sarantopoulos
