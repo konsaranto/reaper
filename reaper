@@ -145,24 +145,23 @@ def parametersfunc(threadName, p, url):
 					return
 				else:
 					#Check for comments
-					sup = re.findall('\\\\\\\\.*?' +key + '.*?value =.*?\d.*?;', html)
-					reg = re.findall('\\\\\*.*?' + key + '.*?value =.*?\d.*?;.*?\*\\\\', html)
+					sup = re.findall('//.*?' +key + '.*?value =.*?\d.*?;', html)
+					reg = re.findall('/\*.*?' + key + '.*?value =.*?\d.*?;.*?\*/', html)
 					reg.extend(sup)
 					sup = re.findall(key + '.*?value =.*?\d.*?;', html)
 					reg.extend(sup)
 					for i in range(0,len(reg)):
 						for j in reg:
-							if re.search('\\\\\\\\', j) :
+							if re.search('//', j) :
 								#del reg[reg.index(j)]
 								reg.remove(j)
 					for i in range(0,len(reg)):	
 						for j in reg:
-							if re.search('\\\\\*', j) :
-								if not re.search('\\\\\*.*?\*\\\\.*?' + key + '.*?value =.*?\d.*?;.*?\\\\\*.*?\*\\\\', j) :
+							if re.search('/\*', j) :
+								if not re.search('/\*.*?\*/.*?' + key + '.*?value =.*?\d.*?;.*?/\*.*?\*/', j) :
 									#del reg[reg.index(j)]
 									reg.remove(j)
-					#csrf_token = str(csrf_token1).split("\"")
-					csrf_token = re.findall('value = .*?\d.*?', str(reg))
+					csrf_token = re.findall('value = .*?\d.*', str(reg))
 					csrf_token = str(csrf_token).split("=")
 					for i in csrf_token[1]:
 						if i.isalnum():
