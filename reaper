@@ -136,16 +136,36 @@ def parametersfunc(threadName, p, url):
 		for key, value in parameters.items():
 			if value == "SCRIPT":		
 				html = req.text
-				#soup = Soup(html, 'lxml')
+				soup = Soup(html, 'lxml')
+				soup = str(soup)
 				token = ""
 				try:
-					csrf_token1 = re.search(key + ".*value =.*\d.*;", html)
+					csrf_token1 = re.search(key + ".*value =.*\d.*;", soup)
 				except IndexError:
 					return
 				else:
-					csrf_token = str(csrf_token1).split("\"")
-					for i in csrf_token:
-						if i.isdigit():				
+					#Check for comments
+					sup = re.findall('\\\\\\\\.*?' +key + '.*?value =.*?\d.*?;', html)
+					reg = re.findall('\\\\\*.*?' + key + '.*?value =.*?\d.*?;.*?\*\\\\', html)
+					reg.extend(sup)
+					sup = re.findall(key + '.*?value =.*?\d.*?;', html)
+					reg.extend(sup)
+					for i in range(0,len(reg)):
+						for j in reg:
+							if re.search('\\\\\\\\', j) :
+								#del reg[reg.index(j)]
+								reg.remove(j)
+					for i in range(0,len(reg)):	
+						for j in reg:
+							if re.search('\\\\\*', j) :
+								if not re.search('\\\\\*.*?\*\\\\.*?' + key + '.*?value =.*?\d.*?;.*?\\\\\*.*?\*\\\\', j) :
+									#del reg[reg.index(j)]
+									reg.remove(j)
+					#csrf_token = str(csrf_token1).split("\"")
+					csrf_token = re.findall('value = .*?\d.*?', str(reg))
+					csrf_token = str(csrf_token).split("=")
+					for i in csrf_token[1]:
+						if i.isalnum():
 							token += i
 					parameters[key] = token  
 		#Make the post request and parse the results	
