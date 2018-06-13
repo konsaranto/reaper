@@ -152,9 +152,14 @@ def parametersfunc(threadName, p, url):
 								if i == j:
 									csrf_token1.remove(i)
 					csrf_token = str(csrf_token1).split("=")
-					for i in csrf_token[1]:
-						if i.isalnum():
-							token += i
+					try:
+						csrf_token[1]
+					except IndexError:
+						return
+					else:
+						for i in csrf_token[1]:
+							if i.isalnum():
+								token += i
 					parameters[key] = token  
 		#Make the post request and parse the results	
 		req = requests.post(url, cookies=cookie, data=parameters)
