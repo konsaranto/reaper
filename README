@@ -67,7 +67,8 @@ Flags:		-h display the help section
 		used as a way to cross check the results of the default method when there is only one url, so you know exactly
 		the parameter names.
 
-		The program raises a SyntaxWarning when it starts which can safely be ignored.		
+		The program raises a SyntaxWarning when it starts which can safely be ignored. If it raiser a SyntaxError
+		please remove the global pas part (2 times) and try again.
 
 		Check https://github.com for updates of Reaper.
 		
