@@ -190,9 +190,9 @@ def parametersfunc(threadName, p, url):
 		else:
 			print ("Found valid credentials: %s , %s" % (url, parameters))
 			#global pas
-			pas = open(save,'a')
-			pas.write('%s\n' %(parameters))
-			pas.close()
+			pas2 = open(save,'a')
+			pas2.write('%s\n' %(parameters))
+			pas2.close()
 	
 def finish():	
 	#Final success or failure message
