@@ -177,10 +177,10 @@ def parametersfunc(threadName, p, url):
 					soup.find_all(attrs={ "name" : key })[0]
 				except IndexError:
 					print ("Found valid credentials: %s , %s" % (url, parameters))
-					#global pas
-					pas = open(save,'a')
-					pas.write('%s\n' % (parameters))
-					pas.close()
+					global pas2
+					pas2 = open(save,'a')
+					pas2.write('%s\n' % (parameters))
+					pas2.close()
 					return
 				else:
 					return
@@ -189,10 +189,10 @@ def parametersfunc(threadName, p, url):
 			pass
 		else:
 			print ("Found valid credentials: %s , %s" % (url, parameters))
-			#global pas
-			pas2 = open(save,'a')
-			pas2.write('%s\n' %(parameters))
-			pas2.close()
+			global pas
+			pas = open(save,'a')
+			pas.write('%s\n' %(parameters))
+			pas.close()
 	
 def finish():	
 	#Final success or failure message
