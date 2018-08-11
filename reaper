@@ -130,8 +130,8 @@ def parametersfunc(threadName, p, url):
 		parameters_list = p.split("/")
 		#make parameters list a dictionary (needed from the requests module)
 		for i in range(0,len(parameters_list)):			
-				para = parameters_list[i].split("=")
-				parameters[para[0]] = para[1]					
+			para = parameters_list[i].split("=")
+			parameters[para[0]] = para[1]					
 		#make a url get request to get the cookies and the csrf token		
 		req = requests.get(url)		           
 		#extract the cookies	
