@@ -67,9 +67,6 @@ Flags:		-h display the help section
 		used as a way to cross check the results of the default method when there is only one url, so you know exactly
 		the parameter names.
 
-		The program raises a SyntaxWarning when it starts which can safely be ignored. If it raiser a SyntaxError
-		please remove the global pas part (2 times) and try again.
-		
 		Reaper is gonna be difficult to work in a vm because bs4 cannot get imported properly.
 
 		Check https://github.com for updates of Reaper.
