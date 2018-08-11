@@ -31,7 +31,7 @@ from bs4 import BeautifulSoup as Soup
 class mythread (threading.Thread):
 	#initialize mythread subclass
 	def __init__(self, name, Q, urlQ):
-		#invoke the base class constructor
+		#invoke the base class (Thread) constructor
 		threading.Thread.__init__(self)
 		self.Q = Q
 		self.urlQ = urlQ
