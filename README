@@ -31,7 +31,8 @@ Flags:		-h display the help section
 		ones from the files. Obviously, find the parameters' names either by looking at the source code or with 
 		Burp Suite or whatever.		
 		
-		 Also, if the site is using csrf tokens (a parameter with a value that changes at each post request), take care:
+		 Also, if the site is using csrf tokens (a parameter with a value that changes at each post request), 
+		 take notice:
 		-If the site has the value for the token embedded in the HTML code (look at the source code) place the word 
 		 TOKEN at the appropriate place. 
 		-If the site gets the value for the token from a script (look at the source code) place the word SCRIPT at
