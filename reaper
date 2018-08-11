@@ -376,7 +376,7 @@ for i in range(0,len(sys.argv)):
 		for j in range(0, int(sys.argv[i+1]) - 1):
 			threadList.append("Thread-%s" % (j + 1))
 			
-#---declare variables and start threads---
+#---declare the variables and start the threads---
 
 threads = []
 t = 0
