@@ -131,15 +131,13 @@ def parametersfunc(threadName, p, url):
 		#make parameters list a dictionary (needed from the requests module)
 		for i in range(0,len(parameters_list)):			
 			para = parameters_list[i].split("=")
-			parameters[para[0]] = para[1]					
-		#make a url get request to get the cookies and the csrf token		
-		req = requests.get(url)		           
-		#extract the cookies	
-		cookie = req.cookies 
+			parameters[para[0]] = para[1]						           
 		#extract the csrf token and add it to parameters
 		#if the csrf token is embedded in the HTML:				
 		for key, value in parameters.items():
-			if value == "TOKEN":		
+			if value == "TOKEN":	
+				#make a url get request to get the csrf token		
+				req = requests.get(url)		
 				html = req.text
 				soup = Soup(html, 'lxml')
 				try:
@@ -151,7 +149,9 @@ def parametersfunc(threadName, p, url):
 					parameters[key] = csrf_token   
 		#if the csrf token is in a script:
 		for key, value in parameters.items():
-			if value == "SCRIPT":		
+			if value == "SCRIPT":	
+				#make a url get request to get the csrf token		
+				req = requests.get(url)		
 				html = req.text
 				csrf_token = ""
 				try:
@@ -167,8 +167,6 @@ def parametersfunc(threadName, p, url):
 					if len(csrf_token1) > 1:
 						#make a second get request 
 						req = requests.get(url)
-						#extract the cookies again cause they change with each request
-						cookie = req.cookies
 						html = req.text
 						#find all the accounts of csrf_token in the html text again
 						csrf_token2 = re.findall(key + ".*?value.*?=.*?\w.*?;", html)
@@ -191,7 +189,7 @@ def parametersfunc(threadName, p, url):
 					#replace TOKEN with the csrf_token
 					parameters[key] = csrf_token  
 		#make the post request and parse the results	
-		req = requests.post(url, cookies=cookie, data=parameters)
+		req = requests.post(url, data=parameters)
 		#find and write into a file any successful attempts			
 		#second_way: check if the same parameters exist in the page served after the request
 		try:
