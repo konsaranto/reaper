@@ -20,7 +20,7 @@ Flags:		-h display the help section
 	      	-URL set the file containing the urls you want to attack (one url at each line)
       		-f set the file to save the valid credentials found 						(required)
       		-t set the number x of tries before waiting for y seconds (Syntax x:y) 				(optional)
-	      	-c set the full (http://) url that loads when you make a failed attempt 			(optional)	
+	      	-c set the full (http://) url that loads when you make a failed attempt 				
 	      	-th set the number of threads									(optional)	
 	      	-s use a second method of validating credentials						(optional)	
 	 
