@@ -246,9 +246,25 @@ def finish():
 #display help
 for i in range(0,len(sys.argv)):
 	if sys.argv[i] == "-h":	
-		help = open(os.path.abspath('reaper') + '/help','r')
-		print (help.read())
-		help.close()	
+		help = """Syntax: path_to_script	[-u username | -U username_file][-p password | -P password_file][-url url | -URL url_file]
+	[-f save_file][-t number_of_tries:time_to_wait][-c url_after_failed_attempt][-th number_of_threads]
+	[-s][-up file_with_credentials][parameters]
+
+Flags:	-h display the help section										
+	-u set the username										 
+	-U set the file containing the usernames (one username at each line)				 
+      	-p set the password										 
+      	-P set the file containing the passwords (one password at each line)				 
+      	-up set the file containing the credentials (Syntax username:password) (one combination at each line)
+	-url set the url and the port (e.g. http://127.0.0.1:160/login.php or http://scanme.nmap.org) 		
+	 *don't omit /login.php or whatever it is, if it exists, and don't omit http:// or https://
+      	-URL set the file containing the urls you want to attack (one url at each line)
+	-f set the file to save the valid credentials found 						(required)
+	-t set the number x of tries before waiting for y seconds (Syntax x:y) 				(optional)
+      	-c set the full (http://) url that loads when you make a failed attempt 				
+      	-th set the number of threads									(optional)	
+      	-s use a second method of validating credentials						(optional)"""
+		print (help)		
 		sys.exit()
 
 #read and split the url file 
