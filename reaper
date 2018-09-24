@@ -3,6 +3,8 @@
 '''
 Reaper is a python3 script which makes http post requests to gather valid credentials from site login forms.
 	
+***Reaper was created for educational purposes. Do NOT use it for illegal purposes.***	
+	
 Copyright © 2018 Konstantinos Sarantopoulos
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
