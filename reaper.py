@@ -39,7 +39,7 @@ class mythread (threading.Thread):
 		self.urlQ = urlQ
 	#the functions that each thread runs when started
 	def run(self):
-		print(self.name, "starting")
+		print(self.name, "started")
 		#call the process function
 		process(self.name, self.Q, self.urlQ)
 		print("Exit", self.name)
