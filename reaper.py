@@ -49,7 +49,6 @@ class mythread (threading.Thread):
 		finish()
 
 #---function section---
-
 def process(threadName, Q, urlQ):
 	#check if the Q queue is empty
 	while not Q.empty():
