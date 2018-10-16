@@ -90,7 +90,6 @@ Flags:	-h display the help section
         			if k == "":
         				credentials.remove(k)
         	creds.close()
-        	creds_file = None
 
         #read and split the username file
         if args[i] == "-U":
@@ -117,31 +116,30 @@ Flags:	-h display the help section
         #get the parameters and make them a list
         if re.search("=.*?/", args[i]):
             parameters_list = []
-            try:
-            	creds_file
-            except NameError:
-            	pass
-            else:
-            	#if there is a credentials file
-            	for j in range(0,len(credentials)):
-            		#split the credentials
-            		creds = credentials[j].split(":")
-            		#replace USERNAME and PASSWORD with the credentials
-            		parameters = args[i].replace('USERNAME', creds[0])
-            		parameters = parameters.replace('PASSWORD', creds[1])
-            		parameters = parameters.split()
-            		#extend the param list with the parameters
-            		parameters_list.extend(parameters)
-            	break
+            #if there is a credentials file
+            for c in range(0, len(args)):
+                if args[c] == "-up":
+                	for j in range(0,len(credentials)):
+                		#split the credentials
+                		creds = credentials[j].split(":")
+                		#replace USERNAME and PASSWORD with the credentials
+                		parameters = args[i].replace('USERNAME', creds[0])
+                		parameters = parameters.replace('PASSWORD', creds[1])
+                		parameters = parameters.split()
+                		#extend the param list with the parameters
+                		parameters_list.extend(parameters)
+                	break
             #for each combination of username and password
-            for username in usernames:
-            	for password in passwords:
-            		#replace USERNAME and PASSWORD
-            		parameters = args[i].replace('USERNAME', username)
-            		parameters = parameters.replace('PASSWORD', password)
-            		parameters = parameters.split()
-            		#extend the param list with the parameters
-            		parameters_list.extend(parameters)
+            for c in range(0, len(args)):
+                if args[c] in [ "-u", "-U" ]:
+                    for username in usernames:
+                    	for password in passwords:
+                    		#replace USERNAME and PASSWORD
+                    		parameters = args[i].replace('USERNAME', username)
+                    		parameters = parameters.replace('PASSWORD', password)
+                    		parameters = parameters.split()
+                    		#extend the param list with the parameters
+                    		parameters_list.extend(parameters)
 
         #set the sleeping variable
         if args[i] == "-t":
