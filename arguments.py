@@ -129,9 +129,9 @@ Flags:	-h display the help section
                 		#extend the param list with the parameters
                 		parameters_list.extend(parameters)
                 	break
-            #for each combination of username and password
+            #if the usernames and passwords are given separately
             for c in range(0, len(args)):
-                if args[c] in [ "-u", "-U" ]:
+                if args[c] in ["-u", "-U"]:
                     for username in usernames:
                     	for password in passwords:
                     		#replace USERNAME and PASSWORD
