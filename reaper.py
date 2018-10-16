@@ -28,10 +28,10 @@ SOFTWARE.
 
 import sys,queue,threading,arguments,functions
 
-#---pass the parameters to and get the variables we need from functions.py---
+#pass the parameters to and get the variables we need from functions.py
 save, url, parameters_list, number_of_tries, time_to_sleep, page, second_way, threadList = arguments.arguments(*sys.argv)
 
-#---define the variables and start the threads---
+#define the variables and start the threads
 Q = queue.Queue()
 urlQ = queue.Queue()
 
