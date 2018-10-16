@@ -30,11 +30,11 @@ def arguments(*args):
     time_to_sleep = 0
     threadList = ['Thread-1']
     for i in range(0, len(args)):
-        #display help
+        #display helpp
         if args[i] == "-h":
             help = """Syntax:	reaper.py	[-u username | -U username_file][-p password | -P password_file][-url url | -URL url_file]
-[-f save_file][-t number_of_tries:time_to_wait][-c url_after_failed_attempt][-th number_of_threads]
-[-s][-up file_with_credentials][parameters]
+            		[-f save_file][-t number_of_tries:time_to_wait][-c url_after_failed_attempt][-th number_of_threads]
+            		[-s][-up file_with_credentials][parameters]
 
 Flags:	-h display the help section
 	-u set the username
