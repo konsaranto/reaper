@@ -29,7 +29,7 @@ SOFTWARE.
 import sys,queue,threading,arguments,functions
 
 #pass the parameters to and get the variables we need from functions.py
-save, url, parameters_list, number_of_tries, time_to_sleep, page, second_way, threadList = arguments.arguments(*sys.argv)
+save, url, parameters_list, number_of_tries, time_to_sleep, page, second_way, threadlist = arguments.arguments(*sys.argv)
 
 #define the variables and start the threads
 Q = queue.Queue()
@@ -47,4 +47,6 @@ print("Number of urls:", urlQ.qsize())
 
 #start the threads
 print ("Starting threads...")
-functions.main(Q, save, urlQ, parameters_list, number_of_tries, time_to_sleep, page, second_way, threadList)
+for tName in threadlist:
+	thread = functions.mythread(tName, Q, urlQ, number_of_tries, time_to_sleep, save, second_way, page, threadlist, parameters_list)
+	thread.start()
