@@ -28,7 +28,7 @@ def arguments(*args):
     page = 0
     number_of_tries = 0
     time_to_sleep = 0
-    threadList = ['Thread-1']
+    threadlist = ['Thread-1']
     for i in range(0, len(args)):
         #display help
         if args[i] == "-h":
@@ -158,6 +158,6 @@ Flags:	-h display the help section
         #set the number of threads
         if args[i] == "-th":
         	for j in range(1, int(args[i+1])):
-        		threadList.append("Thread-%s" % (j + 1))
+        		threadlist.append("Thread-%s" % (j + 1))
 
-    return save, url, parameters_list, number_of_tries, time_to_sleep, page, second_way, threadList
+    return save, url, parameters_list, number_of_tries, time_to_sleep, page, second_way, threadlist
