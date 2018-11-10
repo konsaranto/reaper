@@ -34,12 +34,7 @@ reaper.py   [-u username | -U username_file][-p password | -P password_file][-ur
 
 ## Comments
 
-Set the parameters to be passed along with the http requests. Do it like this e.g:
-username=USERNAME/password=PASSWORD/Login=login... , where username, password, Login etc. are the names of the
-parameters to be passed with the request. The order of the parameters passed doesn't matter. Put capitalized USERNAME
-and PASSWORD at the appropriate places so the script knows where to replace with the ones from the files. Obviously, find
-the parameters' names either by looking at the source code or with Burp Suite or whatever, but do not url encode any of the
-characters, as Reaper is gonna do it when it makes the requests.
+Set the parameters to be passed along with the http requests. Do it like this e.g: username=USERNAME/password=PASSWORD/Login=login... , where username, password, Login etc. are the names of the parameters to be passed with the request. The order of the parameters passed doesn't matter. Put capitalized USERNAME and PASSWORD at the appropriate places so the script knows where to replace with the ones from the files. Obviously, find the parameters' names either by looking at the source code or with Burp Suite or whatever, but do not url encode any of the characters, as Reaper is gonna do it when it makes the requests.
 
 Also, if the site is using csrf tokens (a parameter with a value that changes at each post request), take notice:  
 * If the site has the value for the token embedded in the HTML code (look at the source code) place the word TOKEN at the
