@@ -26,11 +26,11 @@ reaper.py   [-u username | -U username_file][-p password | -P password_file][-ur
 -url set the url and the port (e.g. http://127.0.0.1:160/login.php or http://scanme.nmap.org)  
   don't omit /login.php or whatever it is, if it exists, and don't omit http:// or https://  
 -URL set the file containing the urls you want to attack (one url at each line)  
--f set the file to save the valid credentials found             (required)  
--t set the number x of tries before waiting for y seconds (Syntax x:y)         (optional)  
--c set the full (http://) url that loads when you make a failed attempt  
--th set the number of threads                  (optional)  
--s use a second method of validating credentials            (optional)  
+-f set the file to save the valid credentials found (required)  
+-t set the number x of tries before waiting for y seconds (Syntax x:y) (optional)  
+-c set the full (http://) url that loads when you make a failed attempt (optional)  
+-th set the number of threads (optional)  
+-s use a second method of validating credentials (optional)  
 
 ## Comments
 
