@@ -32,6 +32,8 @@ reaper.py   [-u username | -U username_file][-p password | -P password_file][-ur
 -th set the number of threads                  (optional)  
 -s use a second method of validating credentials            (optional)  
 
+## Comments
+
 Set the parameters to be passed along with the http requests. Do it like this:
 username=USERNAME/password=PASSWORD/csrf_token=TOKEN/... , where username, password, csrf_token etc. are the names of the
 parameters to be passed with the request. The order of the parameters passed doesn't matter. Put capitalized USERNAME
