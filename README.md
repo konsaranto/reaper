@@ -11,14 +11,16 @@ queue,bs4 modules and the lxml parser installed.
 
 ```
 reaper.py	[-u username | -U username_file][-p password | -P password_file][-url url | -URL url_file]
-			[-f save_file][-t number_of_tries:time_to_wait][-c url_after_failed_attempt][-th number_of_threads]
-			[-s][-up file_with_credentials][parameters]
+	[-f save_file][-t number_of_tries:time_to_wait][-c url_after_failed_attempt][-th number_of_threads]
+	[-s][-up file_with_credentials][parameters]
 ```
 
--h display the help section
--u set the username
--U set the file containing the usernames (one username at each line)
--p set the password
+## Flags
+
+-h display the help section  
+-u set the username  
+-U set the file containing the usernames (one username at each line)  
+-p set the password  
 -P set the file containing the passwords (one password at each line)
 -up set the file containing the credentials (Syntax username:password) (one combination at each line)
 -url set the url and the port (e.g. http://127.0.0.1:160/login.php or http://scanme.nmap.org)
