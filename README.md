@@ -42,10 +42,10 @@ the parameters' names either by looking at the source code or with Burp Suite or
 characters, as Reaper is gonna do it when it makes the requests.
 
 Also, if the site is using csrf tokens (a parameter with a value that changes at each post request), take notice:  
--If the site has the value for the token embedded in the HTML code (look at the source code) place the word TOKEN at the
+* If the site has the value for the token embedded in the HTML code (look at the source code) place the word TOKEN at the
  appropriate place in the paramaters (e.g. .../csrf_token=TOKEN/...).  
--If the site gets the value for the token from a script (look at the source code) place the word SCRIPT in the parameters.  
--If there are more than one csrf tokens put the appropriate value (TOKEN | SCRIPT) for each one.  
+* If the site gets the value for the token from a script (look at the source code) place the word SCRIPT in the parameters.  
+* If there are more than one csrf tokens put the appropriate value (TOKEN | SCRIPT) for each one.  
 To spot a csrf token make some post requests and notice if any of the parameters' value changes.  
 
 Notice that a lot of sites actually have protection against this type of attack, by blocking the ip address of the attacker for
