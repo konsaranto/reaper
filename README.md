@@ -70,4 +70,4 @@ default method when there is only one url, so you know exactly the parameter nam
 ### Contact Information
 
 Konstantinos Sarantopoulos  
-konsaranto@gmail.com
+konsaranto@protonmail.com
